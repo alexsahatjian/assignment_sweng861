@@ -8,6 +8,7 @@ import {
 import Login from './Login';
 import Dashboard from './Dashboard';
 import AddData from './AddData';
+import CreateUser from './CreateUser';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => 
@@ -18,6 +19,7 @@ const App = () =>
         <Route path="/" exact element={<Login />} />
         <Route path="/dashboard" exact element={<Dashboard/>}/>
         <Route path='/add_data' exact element={<AddData/>}/>
+        <Route path='/create_user' exact element={<CreateUser/>}/>
       </Routes>
     </Router>
   );

@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Swal from 'sweetalert2'
 import { Link, Navigate, useNavigate  } from 'react-router-dom';
+import axios from 'axios';
 
 const AddData = () =>
 {
@@ -32,32 +33,54 @@ const AddData = () =>
     const states = ["AK", "AL", "AR", "AS", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "GU", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MP", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "UM", "UT", "VA", "VI", "VT", "WA", "WI", "WV", "WY"];
     
     
-    const handleSubmit = (event) => 
+    const handleSubmit = async (event) => 
     {
         let checkvalid = validate();
         if(checkvalid)
         {
-            Swal.fire({
-                title: "Success",
-                text: "Your data has been added",
-                icon: 'success',
-                confirmButtonText: true,
-                confirmButtonColor: '#198754',
-                showCancelButton: true,
-                confirmButtonText: 'Go Home',
-            }).then(() =>{
-                navigate("/dashboard");                
+            const config = {
+                headers: {
+                    'content-type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+            const body = JSON.stringify({
+                "first_name" : submission.first_name,
+                "last_name" : submission.last_name,
+                "email" : submission.email,
+                "phone" : submission.phone,
+                "address" : submission.address,
+                "city" : submission.city,
+                "postal" : submission.postal,
+                "state" : submission.state
             })
+            try 
+            {
+                const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/add_new_customer`, body ,config)
+                Swal.fire({
+                    title: "Success",
+                    text: "Your data has been added",
+                    icon: 'success',
+                    confirmButtonText: true,
+                    confirmButtonColor: '#198754',
+                    confirmButtonText: 'Go Home',
+                }).then(() =>{
+                    navigate("/dashboard");                
+                })
+            }
+            catch(error)
+            {
+                console.log(error);
+            }
+            
         }
     }
 
     const validate = () => 
     {
         let checkValid = true;
-        console.log(/\d/.test(submission.first_name));
         if(/\d/.test(submission.first_name))
         {
-            console.log("hit")
             setValidFirst(true);
             checkValid = false;
         }
@@ -141,7 +164,7 @@ const AddData = () =>
     return(
         <div className="d-flex justify-content-center">
             <Form>
-                <h2 style={{marginBottom:"1em"}}>Add New Data</h2>
+                <h2 style={{marginBottom:"1em"}}>Add Customer</h2>
                 <Row>
                     <Col>
                         <Form.Group style={{marginBottom:".5em"}}>

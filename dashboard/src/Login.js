@@ -1,40 +1,47 @@
 import React, {useState, useEffect} from "react";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { Navigate, useNavigate  } from 'react-router-dom';
+import { Link, Navigate, useNavigate  } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import axios from 'axios';
+
 const Login = () => 
 {
-    const [submission, setSubmission] = useState({"username":"", "password":""});
+    const [user, setUser] = useState({"username":"", "password":""});
     const [rememberSelection, setRemeberSelection] = useState(true);
     const [error, setError] = useState(false);
 
     const navigate = useNavigate();
 
-    const handleSubmit = (event) => 
+    const handleSubmit = async (event) => 
     {
-        if(submission.username === "alex" )
-        {
-            if( submission.password === "password")
-            {
-                setError(false)
-                navigate("/dashboard");
-            }
-            else
-            {
-                setError(true)
+        const config = {
+            headers: {
+                'content-type': 'application/json',
+                'Accept': 'application/json'
             }
         }
-        else
+        const body = JSON.stringify({
+            "username": user.username,
+            "password" : user.password
+        })
+        try
+        {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, body ,config)
+            navigate('/dashboard');
+        }
+        catch(error)
         {
             setError(true)
+            console.log(error)
         }
+
     };
 
     const changeHandler = e => 
     {
-        setSubmission({...submission, [e.target.name]: e.target.value})
+        setUser({...user, [e.target.name]: e.target.value})
     }
 
     return(
@@ -66,6 +73,9 @@ const Login = () =>
                 <Button onClick={handleSubmit} variant="primary">
                     Submit
                 </Button>
+                <Row>
+                    <Link to="create_user">New here?</Link>
+                </Row>
                 </div>
             </Form>
         </div>
